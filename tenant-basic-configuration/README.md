@@ -38,4 +38,5 @@ The following Modules will be automatically installed if you run the script:
 - Microsoft.Online.SharePoint.PowerShell
 
 ## ToDo
-- Set-O365OrgVivaLearning: cmdlet not available but part of the powershell module?
+- Overview of changes the script do
+- Set-O365OrgVivaLearning: cmdlet not available but is part of the powershell module
