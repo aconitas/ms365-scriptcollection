@@ -18,14 +18,9 @@ If your admin account is mfa enabled you have to sign in multible times for ever
 
 ## Usage Example
 ```powershell
-PS C:\temp\ms365-tenant-configuration> Powershell.exe -ExecutionPolicy Bypass -File .\Set-TenantBasicConfig.ps1
+PS C:\temp\ms365-tenant-configuration> Powershell.exe -ExecutionPolicy Bypass -File .\Set-TenantBasicConfig.ps1 -TenantName M365B438883 -MfaEnabledAccount $false -PrivacyProfileUrl "https://domain.tdl/privacy" -PrivacyProfileContact "max.mustermann"
 
 cmdlet Set-TenantBasicConfig.ps1 at command pipeline position 1
-Supply values for the following parameters:
-TenantName: M365B438883
-MfaEnabledAccount: $false
-PrivacyProfileUrl: https://domain.tdl/privacy
-PrivacyProfileContact: max.mustermann
 Required PowerShell Module O365Essentials is not installed. Installing...
 ...
 ```

@@ -1,8 +1,8 @@
 [CmdletBinding()] param (
     [Parameter(Mandatory)][string]$TenantName,
-    [Parameter(Mandatory)][bool]$MfaEnabledAccount = $false,
-    [Parameter(Mandatory)][uri]$PrivacyProfileUrl, 
-    [Parameter(Mandatory)][string]$PrivacyProfileContact
+    [Parameter()][bool]$MfaEnabledAccount = $false,
+    [Parameter()][uri]$PrivacyProfileUrl = " ", 
+    [Parameter()][string]$PrivacyProfileContact = " "
 )
 
 #Requires -RunAsAdministrator
@@ -12,13 +12,13 @@ $requiredPSModules = 'O365Essentials', 'MicrosoftTeams', 'ExchangeOnlineManageme
 foreach ($psModule in $requiredPSModules) {
     if (Get-Module -Name $psModule) {
         Write-Host "Required PowerShell Module $psModule is installed. Importing it ..." -ForegroundColor Yellow
-        Import-Module -Name $psModule
+        Import-Module -Name $psModule -Force 
     }
     else {
         Write-Host "Required PowerShell Module $psModule is not installed. Installing..." -ForegroundColor Yellow
-        Install-Module -Name $psModule -Verbose
+        Install-Module -Name $psModule -Force  
         Write-Host "Importing $psModule ..."
-        Import-Module -Name $psModule
+        Import-Module -Name $psModule -Force  
     }
 }
 
@@ -59,7 +59,7 @@ Set-O365OrgM365Groups -AllowGuestAccess $true -AllowGuestsAsMembers $true -Verbo
 Set-O365OrgMyAnalytics -EnableInsightsDashboard $false -EnableWeeklyDigest $false -EnableInsightsOutlookAddIn $false -Verbose 
 Set-O365OrgModernAuthentication -EnableModernAuth $true -SecureDefaults $true -AllowBasicAuthActiveSync $true -AllowBasicAuthImap $true -AllowBasicAuthPop $false -AllowBasicAuthWebServices $false -AllowBasicAuthPowershell $false -AllowBasicAuthAutodiscover $true -AllowBasicAuthMapi $true -AllowBasicAuthOfflineAddressBook $true -AllowBasicAuthRpc $true -AllowBasicAuthSmtp $false -AllowOutlookClient $true -Verbose
 Set-O365OrgNews -ContentOnNewTabEnabled $false -CompanyInformationAndIndustryEnabled $false -Verbose
-Set-O365OrgInstallationOptions -WindowsBranch "CurrentChannel" -WindowsOffice $false -WindowsSkypeForBusiness $false -MacOffice $true -MacSkypeForBusiness $false  -Verbose
+Set-O365OrgInstallationOptions -WindowsBranch "CurrentChannel" -WindowsOffice $false -WindowsSkypeForBusiness $false -MacOffice $true  -Verbose
 Set-O365OrgOfficeOnTheWeb -Enabled $false -Verbose
 Set-O365OrgScripts -LetUsersAutomateTheirTasks "Disabled" -LetUsersShareTheirScripts "Disabled" -LetUsersRunScriptPowerAutomate "Disabled" -Verbose
 Set-O365OrgReports -PrivacyEnabled $true -PowerBiEnabled $false -Verbose
@@ -85,10 +85,10 @@ Set-O365OrgReleasePreferences -ReleaseTrack None -Verbose
 $SharePointAdminSiteURL = "https://$TenantName-admin.sharepoint.com"
 
 if ($MfaEnabledAccount) { 
-    Connect-SPOService -Url $SharePointAdminSiteURL -Verbose
+    Connect-SPOService -Url $SharePointAdminSiteURL
 }
 else { 
-    Connect-SPOService -Url $SharePointAdminSiteURL -Credential $MS365Credential -Verbose
+    Connect-SPOService -Url $SharePointAdminSiteURL -Credential $MS365Credential
 }
 
 Set-SPOTenant -SharingCapability ExternalUserSharingOnly `
@@ -102,28 +102,27 @@ Disconnect-SPOService -Verbose
 
 # disable communication to skype users
 if ($MfaEnabledAccount) { 
-    Connect-MicrosoftTeams -Verbose
+    Connect-MicrosoftTeams
 }
 else { 
-    Connect-MicrosoftTeams -Credential $MS365Credential -Verbose
+    Connect-MicrosoftTeams -Credential $MS365Credential
 }
 
 Set-CsExternalAccessPolicy -EnablePublicCloudAccess $false 
 Set-CsTenantPublicProvider -Provider ""
 
-Disconnect-MicrosoftTeams -Confirm:$false -Verbose
+Disconnect-MicrosoftTeams -Confirm:$false
 
 # enable unified audit logging
 if ($MfaEnabledAccount) { 
-    Connect-ExchangeOnline -Verbose
+    Connect-ExchangeOnline
  
 }
 else { 
-    Connect-ExchangeOnline -Credential $MS365Credential -Verbose
-
+    Connect-ExchangeOnline -Credential $MS365Credential
 }
 
 Enable-OrganizationCustomization -Verbose
-Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true -Verbose
+Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true
 
-Disconnect-ExchangeOnline -Confirm:$false -Verbose
+Disconnect-ExchangeOnline -Confirm:$false
