@@ -9,7 +9,7 @@ The script itself needs to be run as administrator, the ms365 account you enter 
 ## Script Parameter
 | Parameter | Default Value | Description |
 |---|---|---|
-|TenantName||Tenant Name|
+|TenantName||Tenant|
 |MfaEnabledAccount|$false|Set to $true if your admin account is MFA enabled.|
 |PrivacyProfileUrl|""|URL to the companys data privacy website.|
 |PrivacyProfileContact|""|Username for data privacy officer. |
